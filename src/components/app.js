@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { ballMove } from '../actions';
+import { ballMove, createBrickGrid, updateBrickGrid } from '../actions';
 
 import DisplayPlayArea from './display_play_area';
 
@@ -16,6 +16,8 @@ class App extends Component {
     }
 
     componentDidMount() {
+        this.props.createBrickGrid(this.props.bricks.BRICK_COLS * this.props.bricks.BRICK_ROWS);
+        this.brickReset();
         let framesPerSecond = 30;
         setInterval(this.updateAll.bind(this), 1000/framesPerSecond);
     }
@@ -108,11 +110,34 @@ class App extends Component {
                     ballSpeedY: this.props.ball.ballSpeedY *= -1
                 });
 
-                // if(bricksLeft == 0) {
-                //     brickReset();
-                // } // out of bricks
+                if(this.props.bricks.bricksLeft === 0) {
+                    this.brickReset();
+                } // out of bricks
             }
         }
+    }
+
+    brickReset() {
+        'use strict';
+        let i;
+        let brickGrid = this.props.bricks.brickGrid;
+        for(i=0; i < 3*this.props.bricks.BRICK_COLS; i++) {
+            // create top gutter
+            brickGrid[i] = false;
+        }
+        let bricksLeft = 0;
+        for(i;i<this.props.bricks.BRICK_COLS * this.props.bricks.BRICK_ROWS;i++) {
+            // if(Math.random() < 0.5) {
+            //     brickGrid[i] = true;
+            // } else {
+            //     brickGrid[i] = false;
+            // } // end of else (rand check)
+            brickGrid[i] = true;
+            bricksLeft++;
+        } // end of brick
+
+        // update state with new brickGrid
+        this.props.updateBrickGrid(brickGrid);
     }
 
     render() {
@@ -120,7 +145,7 @@ class App extends Component {
             <div className="row">
               <div className="col-md-2"></div>
               <div className="col-md-8">
-                    <DisplayPlayArea score="0" lives="0" ball={this.props.ball} paddle={this.props.paddle} playArea={this.state.playArea} />
+                    <DisplayPlayArea score="0" lives="0" ball={this.props.ball} paddle={this.props.paddle} playArea={this.state.playArea} bricks={this.props.bricks} />
               </div>
               <div className="col-md-2"></div>
             </div>
@@ -129,12 +154,13 @@ class App extends Component {
 }
 
 function mapStateToProps(state) {
-    // console.log(state);
+    // console.log(state.bricks.brickGrid);
     return {
         ...state,
         ball: state.ball,
-        paddle: state.paddle
+        paddle: state.paddle,
+        bricks: state.bricks
     };
 }
 
-export default connect(mapStateToProps, { ballMove })(App);
+export default connect(mapStateToProps, { ballMove, createBrickGrid, updateBrickGrid })(App);

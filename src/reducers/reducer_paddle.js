@@ -10,7 +10,6 @@ const INITIAL_STATE = {
 export default function (state = INITIAL_STATE, action) {
     switch (action.type) {
         case types.UPDATE_PADDLE_X:
-            console.warn('paddle reducer', action);
             return {
                 ...state,
                 paddleX: action.payload

@@ -40,41 +40,8 @@ class DisplayPlayArea extends Component {
 
     }
 
-    // ===== Handlers =====
-
-    ballPaddleHandler() {
-
-        // work out bounding box of paddle
-        let paddleTopEdgeY = this.canvas.height-this.props.paddle.PADDLE_DIST_FROM_EDGE;
-        let paddleBottomEdgeY = paddleTopEdgeY + this.props.paddle.PADDLE_THICKNESS;
-        let paddleLeftEdgeX = this.state.paddleX;
-        let paddleRightEdgeX = this.state.paddleX + this.props.paddle.PADDLE_WIDTH;
-        if( this.props.ball.ballY+this.props.ball.ballSize > paddleTopEdgeY &&       // below top of paddle
-            this.props.ball.ballY+this.props.ball.ballSize < paddleBottomEdgeY &&    // above bottom of paddle
-            this.props.ball.ballX+this.props.ball.ballSize > paddleLeftEdgeX &&      // right of left side of paddle
-            this.props.ball.ballX+this.props.ball.ballSize < paddleRightEdgeX        // left of right side of paddle
-        ) {
-            // collision with paddle
-            // this.props.ball.ballSpeedY *= -1; // return ball
 
 
-            let centerOfPaddleX = this.props.paddle.paddleX + this.props.paddle.PADDLE_WIDTH/2; // centre of paddle
-            var ballDistFromPaddleCenterX = this.props.ball.ballX - centerOfPaddleX; // get postion of ball on paddle
-            this.props.ball.ballSpeedX = ballDistFromPaddleCenterX * 0.35; // max speed could be +/- 50, so muliply by 0.35 to prevent being too fast
-
-            // update ball
-            this.props.ballMove({
-                ballX: this.props.ball.ballX,
-                ballSpeedX: this.props.ball.ballSpeedX = ballDistFromPaddleCenterX * 0.35,
-                ballY: this.props.ball.ballY,
-                ballSpeedY: this.props.ball.ballSpeedY *= -1
-            });
-
-            // if(bricksLeft == 0) {
-            //     brickReset();
-            // } // out of bricks
-        }
-    }
 
     // ===== Clear and Draw the Play Area =====
 
@@ -100,11 +67,37 @@ class DisplayPlayArea extends Component {
 
             // draw paddle sprite
             this.colourRect(ctx, this.props.paddle.paddleX,this.canvas.height-this.props.paddle.PADDLE_DIST_FROM_EDGE, this.props.paddle.PADDLE_WIDTH,this.props.paddle.PADDLE_THICKNESS, '#ffffff' );
+
+            this.drawBricks();
         }
 
     }
 
     // ====== draw methods =====
+
+    rowColToArrayIndex(col, row) {
+        'use strict';
+        return col + this.props.bricks.BRICK_COLS * row;
+    }
+
+    drawBricks() {
+        const ctx = this.canvas.getContext('2d');
+
+        for(let eachRow=0;eachRow<this.props.bricks.BRICK_ROWS;eachRow++) {
+
+            for(let eachCol=0;eachCol<this.props.bricks.BRICK_COLS;eachCol++) {
+
+                var arrayIndex = this.rowColToArrayIndex(eachCol, eachRow);
+
+                if(this.props.bricks.brickGrid[arrayIndex]) {
+                    this.colourRect(ctx, this.props.bricks.BRICK_W*eachCol,this.props.bricks.BRICK_H*eachRow, this.props.bricks.BRICK_W - this.props.bricks.BRICK_GAP, this.props.bricks.BRICK_H - this.props.bricks.BRICK_GAP, 'green');
+                } // end of is this brick here
+
+            } // end of for each brick
+
+        } // end of for each row
+
+    }
 
     colourRect(ctx, topLeftX,topLeftY, boxWidth,boxHeight, fillColour) {
         // draw a rectangle to canvas
