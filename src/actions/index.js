@@ -28,3 +28,10 @@ export function updateBrickGrid(brickGrid) {
         payload: brickGrid
     };
 }
+
+export function updateBricksLeft(total) {
+    return {
+        type: types.UPDATE_BRICKS_LEFT,
+        payload: total
+    };
+}

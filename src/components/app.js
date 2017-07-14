@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { ballMove, createBrickGrid, updateBrickGrid } from '../actions';
+import { ballMove, createBrickGrid, updateBrickGrid, updateBricksLeft } from '../actions';
 
 import DisplayPlayArea from './display_play_area';
 
@@ -18,12 +18,14 @@ class App extends Component {
     componentDidMount() {
         this.props.createBrickGrid(this.props.bricks.BRICK_COLS * this.props.bricks.BRICK_ROWS);
         this.brickReset();
+        this.resetBall();
         let framesPerSecond = 30;
         setInterval(this.updateAll.bind(this), 1000/framesPerSecond);
     }
 
     updateAll() {
         this.ballMove();
+        this.ballBrickHandler();
         this.ballPaddleHandler();
     }
 
@@ -117,6 +119,105 @@ class App extends Component {
         }
     }
 
+    resetBall() {
+        'use strict';
+        // reset ball to middle of screen
+        this.props.ballMove({
+            ballX: this.state.playArea.width/2,
+            ballSpeedX: this.props.ball.ballSpeedX,
+            ballY: this.state.playArea.height/2,
+            ballSpeedY: this.props.ball.ballSpeedY
+        });
+    }
+
+    ballBrickHandler() {
+        'use strict';
+        // ball / brick collision detection
+        var ballBrickCol = Math.floor(this.props.ball.ballX / this.props.bricks.BRICK_W);
+        var ballBrickRow = Math.floor(this.props.ball.ballY / this.props.bricks.BRICK_H);
+        var brickIndexUnderBall = this.rowColToArrayIndex(ballBrickCol, ballBrickRow);
+
+        // check if index under ball is within brick grid, fix to check that col/row is not neg number, so doesn't remove brick on opposite side
+        if( ballBrickCol >= 0 && ballBrickCol < this.props.bricks.BRICK_COLS &&
+            ballBrickRow >= 0 && ballBrickRow < this.props.bricks.BRICK_ROWS) {
+
+            // check to see if brick is true
+            if(this.isBrickAtColRow(ballBrickCol, ballBrickRow)) {
+                let brickGrid = this.props.bricks.brickGrid;
+                let bricksLeft = this.props.bricks.bricksLeft;
+                let ballSpeedX = this.props.ball.ballSpeedX;
+                let ballSpeedY = this.props.ball.ballSpeedY;
+                // is brick there, so set to false (remove)
+                brickGrid[brickIndexUnderBall] = false;
+                this.props.updateBrickGrid(brickGrid);
+
+                // update score
+                // currentScore = currentScore + 25;
+                bricksLeft--; // remove brick from count
+                this.props.updateBricksLeft(bricksLeft);
+
+                // check face ball hit & bounce off in reverse direction
+                // work out previous frame position
+                var prevBallX = this.props.ball.ballX - this.props.ball.ballSpeedX;
+                var prevBallY = this.props.ball.ballY - this.props.ball.ballSpeedY;
+                var prevBrickCol = Math.floor(prevBallX / this.props.bricks.BRICK_W);
+                var prevBrickRow = Math.floor(prevBallY / this.props.bricks.BRICK_H);
+
+                var bothTestsFailed = true;
+
+                // check if column changed
+                if(prevBrickCol != ballBrickCol) {
+                    if(this.isBrickAtColRow(prevBrickCol, ballBrickRow) === false) {
+                        // check to see if brick missing to the side
+                        ballSpeedX *= -1; // return ball
+                        bothTestsFailed = false;
+                    }
+                }
+                // check if row changed
+                if(prevBrickRow != ballBrickRow) {
+                    if(this.isBrickAtColRow(ballBrickCol, prevBrickRow) === false) {
+                        ballSpeedY *= -1; // return ball
+                        bothTestsFailed = false;
+                    }
+                }
+                if(bothTestsFailed) {
+                    // both edges failed, hit brick corner from inside, so send back the way it came
+                    ballSpeedX *= -1; // return ball
+                    ballSpeedY *= -1; // return ball
+                    // TODO could remove adjacent bricks here
+                }
+
+                // update the state.
+                this.props.ballMove({
+                    ballX: this.props.ball.ballX,
+                    ballY: this.props.ball.ballY,
+                    ballSpeedX,
+                    ballSpeedY
+                });
+
+            } // end of brick found
+        } // end of valid col and row
+    }
+
+    rowColToArrayIndex(col, row) {
+        'use strict';
+        return col + this.props.bricks.BRICK_COLS * row;
+    }
+
+    isBrickAtColRow(col, row) {
+        'use strict';
+        if( col >= 0 && col < this.props.bricks.BRICK_COLS &&
+            row >= 0 && row < this.props.bricks.BRICK_ROWS) {
+
+            var brickIndexUnderCoord = this.rowColToArrayIndex(col, row);
+
+            return this.props.bricks.brickGrid[brickIndexUnderCoord];
+        } else {
+            // is outside grid, so return false
+            return false;
+        }
+    }
+
     brickReset() {
         'use strict';
         let i;
@@ -163,4 +264,4 @@ function mapStateToProps(state) {
     };
 }
 
-export default connect(mapStateToProps, { ballMove, createBrickGrid, updateBrickGrid })(App);
+export default connect(mapStateToProps, { ballMove, createBrickGrid, updateBrickGrid, updateBricksLeft })(App);

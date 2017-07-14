@@ -22,6 +22,11 @@ export default function (state = INITIAL_STATE, action) {
                 ...state,
                 brickGrid: action.payload
             }
+        case types.UPDATE_BRICKS_LEFT:
+            return {
+                ...state,
+                bricksLeft: action.payload
+            }
         default:
             return state;
     }
