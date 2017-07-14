@@ -1,6 +1,6 @@
-# React v15 / Redux Boilerplate
+# Bat and Ball - React / Redux
 
-React v15 boilerplate with Redux, Redux-Thunk, React Router with Bootstrap3 & Font Awesome.
+Experiments with using canvas with React / Redux
 
 ### Development Mode ###
 

@@ -1,13 +1,14 @@
 {
-  "name": "react15-redux-boilerplate",
+  "name": "bat-and-ball-react-redux",
   "version": "1.0.0",
-  "description": "Boilerplate for react v15 & redux, with mocha/chai",
+  "description": "Experiment with canvas in react / redux",
   "main": "index.js",
-  "repository": "",
+  "repository": "https://github.com/henroben/bat-and-ball-react.git",
   "scripts": {
     "start": "node ./node_modules/webpack-dev-server/bin/webpack-dev-server.js --port 3030",
     "clean": "rimraf dist",
     "build": "npm run clean && webpack -p",
+    "deploy": "npm run build && git subtree push --prefix dist origin gh-pages",
     "test": "mocha --compilers js:babel-core/register --require ./test/test_helper.js --recursive ./test",
     "test:watch": "npm run test -- --watch"
   },
