@@ -35,3 +35,24 @@ export function updateBricksLeft(total) {
         payload: total
     };
 }
+
+export function updateScore(score) {
+    return {
+        type: types.UPDATE_SCORE,
+        payload: score
+    }
+}
+
+export function updateLives(lives) {
+    return {
+        type: types.UPDATE_LIVES,
+        payload: lives
+    }
+}
+
+export function updateGameState(state) {
+    return {
+        type: types.UPDATE_GAME_STATE,
+        payload: state
+    }
+}

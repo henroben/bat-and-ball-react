@@ -63,7 +63,7 @@ class DisplayPlayArea extends Component {
             this.colourCircle(ctx, this.props.ball.ballX, this.props.ball.ballY, this.props.ball.ballSize, '#ffffff');
 
             // draw mouse co-ords
-            this.colourText(ctx, this.state.x + ' , ' + this.state.y, this.state.x + 10, this.state.y + 10, 'yellow');
+            // this.colourText(ctx, this.state.x + ' , ' + this.state.y, this.state.x + 10, this.state.y + 10, 'yellow');
 
             // draw paddle sprite
             this.colourRect(ctx, this.props.paddle.paddleX,this.canvas.height-this.props.paddle.PADDLE_DIST_FROM_EDGE, this.props.paddle.PADDLE_WIDTH,this.props.paddle.PADDLE_THICKNESS, '#ffffff' );
