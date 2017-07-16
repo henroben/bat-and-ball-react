@@ -43,6 +43,13 @@ export function updateScore(score) {
     }
 }
 
+export function updateHighScore(highScore) {
+    return {
+        type: types.UPDATE_HIGH_SCORE,
+        payload: highScore
+    }
+}
+
 export function updateLives(lives) {
     return {
         type: types.UPDATE_LIVES,

@@ -2,9 +2,10 @@ import * as types from '../actions/types';
 
 const INITIAL_STATE = {
     score: 0,
-    lives: 3,
+    lives: 2,
     level: 1,
-    gameState: 'intro'
+    gameState: 'intro',
+    highScore: 0
 };
 
 export default function (state = INITIAL_STATE, action) {
@@ -13,6 +14,11 @@ export default function (state = INITIAL_STATE, action) {
             return {
                 ...state,
                 score: action.payload
+            }
+        case types.UPDATE_HIGH_SCORE:
+            return {
+                ...state,
+                highScore: action.payload
             }
         case types.UPDATE_LIVES:
             return {

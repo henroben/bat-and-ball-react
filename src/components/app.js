@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import DisplayIntro from './display_intro';
 import {
     ballMove,
     createBrickGrid,
     updateBrickGrid,
     updateBricksLeft,
     updateScore,
+    updateHighScore,
     updateLives,
     updateLevel,
     updateGameState
@@ -26,6 +28,7 @@ class App extends Component {
 
     componentDidMount() {
         if(this.props.game.gameState === 'play') {
+            // create the initial brick grid
             this.props.createBrickGrid(this.props.bricks.BRICK_COLS * this.props.bricks.BRICK_ROWS);
             this.brickReset();
             this.resetBall();
@@ -34,8 +37,9 @@ class App extends Component {
         }
     }
 
-    componentDidUpdate() {
-
+    componentWillUnmount() {
+        // unmounting component, so make sure interval is cleared
+        clearInterval(this.intervalId);
     }
 
     updateAll() {
@@ -57,47 +61,35 @@ class App extends Component {
         // collision detection
         if(ballX < 0 && ballSpeedX < 0.0) {
             // check if hit left hand side of canvas
-            console.warn('hit left');
             ballSpeedX *= -1;
         }
         if(ballX > 800 && ballSpeedX > 0.0) {
             // check if hit right hand side of canvas
-            console.warn('hit right');
             ballSpeedX *= -1;
         }
 
         if(ballY < 0 && ballSpeedY < 0.0) {
             // check if hit top of canvas
-            console.warn('hit top');
             ballSpeedY *= -1; // = -ballSpeedX
         }
         if(ballY > this.state.playArea.height && ballSpeedY > 0.0) {
             // check if hit bottom of canvas
-            console.warn('hit bottom');
-            // ballSpeedY *= -1; // = -ballSpeedX
             if(this.props.game.lives > 0) {
                 // decrease lives by 1
                 this.resetBall();
                 this.props.updateLives(this.props.game.lives - 1);
                 return;
             } else {
-                console.warn('Game Over');
+                // run out of lives, GAME OVER MAN!
                 this.game('gameover'); // clear interval
+                if(this.props.game.score > this.props.game.highScore) {
+                    // Player achieved new high score
+                    this.props.updateHighScore(this.props.game.score);
+                }
                 this.props.updateGameState('gameover');
                 return;
             }
         }
-        // if(ballY > canvas.height) {
-        //     // check if hit bottom of canvas
-        //     if(numberOfLives > 0) {
-        //         resetBall();
-        //         brickReset();
-        //         numberOfLives--;
-        //     } else {
-        //         resetScore();
-        //     }
-        //
-        // }
 
         // set the state
         this.props.ballMove({
@@ -110,7 +102,6 @@ class App extends Component {
     }
 
     ballPaddleHandler() {
-
         // work out bounding box of paddle
         if(this.state.playArea.height) {
             let paddleTopEdgeY = this.state.playArea.height-this.props.paddle.PADDLE_DIST_FROM_EDGE;
@@ -123,8 +114,6 @@ class App extends Component {
                 this.props.ball.ballX+this.props.ball.ballSize < paddleRightEdgeX        // left of right side of paddle
             ) {
                 // collision with paddle
-                // this.props.ball.ballSpeedY *= -1; // return ball
-
 
                 let centerOfPaddleX = this.props.paddle.paddleX + this.props.paddle.PADDLE_WIDTH/2; // centre of paddle
                 var ballDistFromPaddleCenterX = this.props.ball.ballX - centerOfPaddleX; // get postion of ball on paddle
@@ -139,14 +128,16 @@ class App extends Component {
                 });
 
                 if(this.props.bricks.bricksLeft === 0) {
-                    console.warn('end of level');
                     // advance level
                     this.props.updateLevel(this.props.game.level + 1);
+                    if(this.props.game.level / 3 === 1) {
+                        // increase lives by 1 every three levels
+                        this.props.updateLives(this.props.game.lives + 1);
+                    }
                     // reset the bricks
                     this.brickReset();
                 } // out of bricks
 
-                console.log('bricks left', this.props.bricks.bricksLeft);
             }
         }
     }
@@ -256,17 +247,15 @@ class App extends Component {
         'use strict';
         let i;
         let brickGrid = this.props.bricks.brickGrid;
+
         for(i=0; i < 3*this.props.bricks.BRICK_COLS; i++) {
             // create top gutter
             brickGrid[i] = false;
         }
+
         let bricksLeft = 0;
+
         for(i;i<this.props.bricks.BRICK_COLS * this.props.bricks.BRICK_ROWS;i++) {
-            // if(Math.random() < 0.5) {
-            //     brickGrid[i] = true;
-            // } else {
-            //     brickGrid[i] = false;
-            // } // end of else (rand check)
             brickGrid[i] = true;
             bricksLeft++;
         } // end of brick
@@ -276,31 +265,28 @@ class App extends Component {
         this.props.updateBricksLeft(bricksLeft);
     }
 
-    handleKeyUp(event, state) {
-        console.log('key up', event);
-        this.props.updateGameState(state);
-    }
     handleClick(state, event) {
         this.props.updateGameState(state);
         if(state === 'play') {
             this.game('play');
         } else if(state = 'intro') {
             // moving from gameover to intro state, so reset score, lives and level
-            this.props.updateLives(3);
+            this.props.updateLives(2);
             this.props.updateScore(0);
             this.props.updateLevel(1);
         }
     }
+
     game(state) {
         if(state === 'play') {
+            // New game, so create new brick grid, reset & draw bricks, reset ball, set interval
             this.props.createBrickGrid(this.props.bricks.BRICK_COLS * this.props.bricks.BRICK_ROWS);
             this.brickReset();
             this.resetBall();
             let framesPerSecond = 30;
             this.intervalId = setInterval(this.updateAll.bind(this), 1000/framesPerSecond);
-            console.log('interval set', this.intervalId);
         } else if(state === 'gameover') {
-            console.log('interval cleared', this.intervalId);
+            // Game over, so clear interval
             clearInterval(this.intervalId);
         }
     }
@@ -310,8 +296,7 @@ class App extends Component {
             case 'intro':
                 return(
                     <div>
-                        <h1>BAT AND BALL</h1>
-                        <button className="btn btn-primary" onClick={this.handleClick.bind(this, 'play')}>CLICK TO PLAY</button>
+                        <DisplayIntro handleClick={this.handleClick.bind(this, 'play')} />
                     </div>
                 );
             case 'play':
@@ -324,6 +309,7 @@ class App extends Component {
                         <h1>GAME OVER!</h1>
                         <h1>You Got To Level {this.props.game.level}</h1>
                         <h1>And Scored {this.props.game.score} Points!</h1>
+                        <h1>Current High Score is {this.props.game.highScore}</h1>
                         <button className="btn btn-primary" onClick={this.handleClick.bind(this, 'intro')}>TRY AGAIN</button>
                     </div>
                 );
@@ -354,4 +340,13 @@ function mapStateToProps(state) {
     };
 }
 
-export default connect(mapStateToProps, { ballMove, createBrickGrid, updateBrickGrid, updateBricksLeft, updateScore, updateLives, updateGameState, updateLevel })(App);
+export default connect(mapStateToProps, {
+    ballMove,
+    createBrickGrid,
+    updateBrickGrid,
+    updateBricksLeft,
+    updateScore,
+    updateHighScore,
+    updateLives,
+    updateGameState,
+    updateLevel })(App);

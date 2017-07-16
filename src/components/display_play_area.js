@@ -142,6 +142,7 @@ class DisplayPlayArea extends Component {
         if(this.props.ball) {
             return (
                 <div>
+                    <h3>Bat and Ball</h3>
                     <canvas ref={canvas => this.canvas = canvas} onMouseMove={this._onMouseMove.bind(this)} />
                 </div>
             );

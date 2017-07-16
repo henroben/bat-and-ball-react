@@ -16,6 +16,20 @@ body {
   margin-top: 25px;
 }
 
-h1 {
+h1, h2, h3 {
   color: $text-color !important;
+  margin-top: 0px !important;
+}
+
+canvas {
+  cursor: none;
+}
+
+/* ===== Bat & Ball Intro Screen ===== */
+.bat-and-ball-intro-screen {
+  text-align: center;
+  p {
+    color: $text-color;
+    text-align: justify;
+  }
 }
