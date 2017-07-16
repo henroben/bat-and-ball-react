@@ -7,6 +7,7 @@ import {
     updateBricksLeft,
     updateScore,
     updateLives,
+    updateLevel,
     updateGameState
 } from '../actions';
 
@@ -127,19 +128,25 @@ class App extends Component {
 
                 let centerOfPaddleX = this.props.paddle.paddleX + this.props.paddle.PADDLE_WIDTH/2; // centre of paddle
                 var ballDistFromPaddleCenterX = this.props.ball.ballX - centerOfPaddleX; // get postion of ball on paddle
-                this.props.ball.ballSpeedX = ballDistFromPaddleCenterX * 0.35; // max speed could be +/- 50, so muliply by 0.35 to prevent being too fast
+                this.props.ball.ballSpeedX = ballDistFromPaddleCenterX * 0.35 * (this.props.game.level / 3); // max speed could be +/- 50, so muliply by 0.35 to prevent being too fast
 
                 // update ball
                 this.props.ballMove({
                     ballX: this.props.ball.ballX,
-                    ballSpeedX: this.props.ball.ballSpeedX = ballDistFromPaddleCenterX * 0.35,
+                    ballSpeedX: this.props.ball.ballSpeedX = ballDistFromPaddleCenterX * 0.35 * (this.props.game.level / 3),
                     ballY: this.props.ball.ballY,
                     ballSpeedY: this.props.ball.ballSpeedY *= -1
                 });
 
                 if(this.props.bricks.bricksLeft === 0) {
+                    console.warn('end of level');
+                    // advance level
+                    this.props.updateLevel(this.props.game.level + 1);
+                    // reset the bricks
                     this.brickReset();
                 } // out of bricks
+
+                console.log('bricks left', this.props.bricks.bricksLeft);
             }
         }
     }
@@ -177,7 +184,9 @@ class App extends Component {
                 this.props.updateBrickGrid(brickGrid);
 
                 // update score
-                this.props.updateScore(this.props.game.score + 25);
+                let brickScore = (50 -ballBrickRow) * this.props.game.level;
+                this.props.updateScore(this.props.game.score + brickScore);
+                // remove brick from count
                 bricksLeft--; // remove brick from count
                 this.props.updateBricksLeft(bricksLeft);
 
@@ -264,6 +273,7 @@ class App extends Component {
 
         // update state with new brickGrid
         this.props.updateBrickGrid(brickGrid);
+        this.props.updateBricksLeft(bricksLeft);
     }
 
     handleKeyUp(event, state) {
@@ -275,13 +285,13 @@ class App extends Component {
         if(state === 'play') {
             this.game('play');
         } else if(state = 'intro') {
-            // moving from gameover to intro state, so reset score and lives
+            // moving from gameover to intro state, so reset score, lives and level
             this.props.updateLives(3);
             this.props.updateScore(0);
+            this.props.updateLevel(1);
         }
     }
     game(state) {
-        // let game = 0;
         if(state === 'play') {
             this.props.createBrickGrid(this.props.bricks.BRICK_COLS * this.props.bricks.BRICK_ROWS);
             this.brickReset();
@@ -294,22 +304,27 @@ class App extends Component {
             clearInterval(this.intervalId);
         }
     }
+    // Handles Introduction / Playing Game / Game Over States
     renderGameState(state) {
         switch(state) {
             case 'intro':
                 return(
-                    <div><h1 onKeyUp={this.handleKeyUp.bind(this, 'play')} onClick={this.handleClick.bind(this, 'play')}>Cick to start</h1></div>
+                    <div>
+                        <h1>BAT AND BALL</h1>
+                        <button className="btn btn-primary" onClick={this.handleClick.bind(this, 'play')}>CLICK TO PLAY</button>
+                    </div>
                 );
             case 'play':
                 return(
-                    <DisplayPlayArea score={this.props.game.score} lives={this.props.game.lives} ball={this.props.ball} paddle={this.props.paddle} playArea={this.state.playArea} bricks={this.props.bricks} />
+                    <DisplayPlayArea score={this.props.game.score} lives={this.props.game.lives} level={this.props.game.level} ball={this.props.ball} paddle={this.props.paddle} playArea={this.state.playArea} bricks={this.props.bricks} />
                 );
             case 'gameover':
                 return(
                     <div>
                         <h1>GAME OVER!</h1>
-                        <h1>You Scored {this.props.game.score}</h1>
-                        <h1 onKeyUp={this.handleKeyUp.bind(this, 'intro')} onClick={this.handleClick.bind(this, 'intro')}>Click to try again.</h1>
+                        <h1>You Got To Level {this.props.game.level}</h1>
+                        <h1>And Scored {this.props.game.score} Points!</h1>
+                        <button className="btn btn-primary" onClick={this.handleClick.bind(this, 'intro')}>TRY AGAIN</button>
                     </div>
                 );
         }
@@ -339,4 +354,4 @@ function mapStateToProps(state) {
     };
 }
 
-export default connect(mapStateToProps, { ballMove, createBrickGrid, updateBrickGrid, updateBricksLeft, updateScore, updateLives, updateGameState })(App);
+export default connect(mapStateToProps, { ballMove, createBrickGrid, updateBrickGrid, updateBricksLeft, updateScore, updateLives, updateGameState, updateLevel })(App);

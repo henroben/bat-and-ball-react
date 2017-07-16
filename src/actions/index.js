@@ -50,6 +50,13 @@ export function updateLives(lives) {
     }
 }
 
+export function updateLevel(level) {
+    return {
+        type: types.UPDATE_LEVEL,
+        payload: level
+    }
+}
+
 export function updateGameState(state) {
     return {
         type: types.UPDATE_GAME_STATE,

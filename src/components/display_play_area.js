@@ -40,9 +40,6 @@ class DisplayPlayArea extends Component {
 
     }
 
-
-
-
     // ===== Clear and Draw the Play Area =====
 
     clearAndDraw() {
@@ -57,6 +54,7 @@ class DisplayPlayArea extends Component {
 
             // draw score lives
             this.colourText(ctx, 'Score: ' + this.props.score, 25, 25, '#ffffff');
+            this.colourText(ctx, 'Level: ' + this.props.level, 385, 25, '#ffffff');
             this.colourText(ctx, 'Lives: ' + this.props.lives, 740, 25, '#ffffff');
 
             // draw ball sprite
@@ -82,6 +80,26 @@ class DisplayPlayArea extends Component {
 
     drawBricks() {
         const ctx = this.canvas.getContext('2d');
+        let colours = [
+            'red',
+            'green',
+            'yellow',
+            'blue',
+            'orange',
+            'purple',
+            'red',
+            'green',
+            'yellow',
+            'blue',
+            'orange',
+            'purple',
+            'red',
+            'green',
+            'yellow',
+            'blue',
+            'orange',
+            'purple'
+        ];
 
         for(let eachRow=0;eachRow<this.props.bricks.BRICK_ROWS;eachRow++) {
 
@@ -90,7 +108,7 @@ class DisplayPlayArea extends Component {
                 var arrayIndex = this.rowColToArrayIndex(eachCol, eachRow);
 
                 if(this.props.bricks.brickGrid[arrayIndex]) {
-                    this.colourRect(ctx, this.props.bricks.BRICK_W*eachCol,this.props.bricks.BRICK_H*eachRow, this.props.bricks.BRICK_W - this.props.bricks.BRICK_GAP, this.props.bricks.BRICK_H - this.props.bricks.BRICK_GAP, 'green');
+                    this.colourRect(ctx, this.props.bricks.BRICK_W*eachCol,this.props.bricks.BRICK_H*eachRow, this.props.bricks.BRICK_W - this.props.bricks.BRICK_GAP, this.props.bricks.BRICK_H - this.props.bricks.BRICK_GAP, colours[this.props.game.level]);
                 } // end of is this brick here
 
             } // end of for each brick
