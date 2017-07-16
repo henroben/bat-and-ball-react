@@ -78,7 +78,6 @@ class DisplayPlayArea extends Component {
             // this.colourText(ctx, this.state.x + ' , ' + this.state.y, this.state.x + 10, this.state.y + 10, 'yellow');
 
             // draw paddle sprite
-            console.log('padd', this.props.paddle.paddleX);
             this.colourRect(ctx, this.props.paddle.paddleX,this.canvas.height-this.props.paddle.PADDLE_DIST_FROM_EDGE, this.props.paddle.PADDLE_WIDTH,this.props.paddle.PADDLE_THICKNESS, '#ffffff', 0 );
 
             this.drawBricks();
