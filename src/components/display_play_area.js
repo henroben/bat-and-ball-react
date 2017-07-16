@@ -64,7 +64,7 @@ class DisplayPlayArea extends Component {
             // this.colourText(ctx, this.state.x + ' , ' + this.state.y, this.state.x + 10, this.state.y + 10, 'yellow');
 
             // draw paddle sprite
-            this.colourRect(ctx, this.props.paddle.paddleX,this.canvas.height-this.props.paddle.PADDLE_DIST_FROM_EDGE, this.props.paddle.PADDLE_WIDTH,this.props.paddle.PADDLE_THICKNESS, '#ffffff' );
+            this.colourRect(ctx, this.props.paddle.paddleX,this.canvas.height-this.props.paddle.PADDLE_DIST_FROM_EDGE, this.props.paddle.PADDLE_WIDTH,this.props.paddle.PADDLE_THICKNESS, '#ffffff', 0 );
 
             this.drawBricks();
         }
@@ -108,7 +108,7 @@ class DisplayPlayArea extends Component {
                 var arrayIndex = this.rowColToArrayIndex(eachCol, eachRow);
 
                 if(this.props.bricks.brickGrid[arrayIndex]) {
-                    this.colourRect(ctx, this.props.bricks.BRICK_W*eachCol,this.props.bricks.BRICK_H*eachRow, this.props.bricks.BRICK_W - this.props.bricks.BRICK_GAP, this.props.bricks.BRICK_H - this.props.bricks.BRICK_GAP, colours[this.props.game.level]);
+                    this.colourRect(ctx, this.props.bricks.BRICK_W*eachCol,this.props.bricks.BRICK_H*eachRow, this.props.bricks.BRICK_W - this.props.bricks.BRICK_GAP, this.props.bricks.BRICK_H - this.props.bricks.BRICK_GAP, colours[this.props.game.level], (eachRow/10));
                 } // end of is this brick here
 
             } // end of for each brick
@@ -117,10 +117,14 @@ class DisplayPlayArea extends Component {
 
     }
 
-    colourRect(ctx, topLeftX,topLeftY, boxWidth,boxHeight, fillColour) {
+    colourRect(ctx, topLeftX,topLeftY, boxWidth,boxHeight, fillColour, opacity) {
         // draw a rectangle to canvas
+        console.log('opacity', opacity);
+        ctx.save();
+        ctx.globalAlpha = 1.6 - opacity;
         ctx.fillStyle = fillColour;
         ctx.fillRect(topLeftX,topLeftY, boxWidth,boxHeight); // fill the canvas x/y: top, left, width, height
+        ctx.restore();
     }
 
     colourCircle(ctx, centreX,centreY, radius, fillColour) {
