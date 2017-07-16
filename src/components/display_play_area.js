@@ -32,11 +32,25 @@ class DisplayPlayArea extends Component {
         let rect = this.canvas.getBoundingClientRect(); // position on page of the canvas
         let root = document.documentElement;
 
+        let posX;
+        let posY
+
+        if(e.clientX && e.clientY) {
+            // mouse
+            posX = e.clientX;
+            posY = e.clientY;
+        } else if (e.targetTouches) {
+            posX = Math.floor(e.targetTouches[0].clientX);
+            posY = e.targetTouches[0].clientY;
+        }
+
+        posX = Math.floor(posX - rect.left - root.scrollLeft);
+
         this.setState({
-            x: e.clientX - rect.left - root.scrollLeft,
-            y: e.clientY - rect.top - root.scrollTop,
+            x: posX,
+            y: posY - rect.top - root.scrollTop,
          });
-        this.props.updatePaddleX((e.clientX - rect.left - root.scrollLeft) - (this.props.paddle.PADDLE_WIDTH / 2));
+        this.props.updatePaddleX(posX - (this.props.paddle.PADDLE_WIDTH / 2));
 
     }
 
@@ -64,6 +78,7 @@ class DisplayPlayArea extends Component {
             // this.colourText(ctx, this.state.x + ' , ' + this.state.y, this.state.x + 10, this.state.y + 10, 'yellow');
 
             // draw paddle sprite
+            console.log('padd', this.props.paddle.paddleX);
             this.colourRect(ctx, this.props.paddle.paddleX,this.canvas.height-this.props.paddle.PADDLE_DIST_FROM_EDGE, this.props.paddle.PADDLE_WIDTH,this.props.paddle.PADDLE_THICKNESS, '#ffffff', 0 );
 
             this.drawBricks();
@@ -119,7 +134,6 @@ class DisplayPlayArea extends Component {
 
     colourRect(ctx, topLeftX,topLeftY, boxWidth,boxHeight, fillColour, opacity) {
         // draw a rectangle to canvas
-        console.log('opacity', opacity);
         ctx.save();
         ctx.globalAlpha = 1.6 - opacity;
         ctx.fillStyle = fillColour;
@@ -147,7 +161,7 @@ class DisplayPlayArea extends Component {
             return (
                 <div>
                     <h3>Bat and Ball</h3>
-                    <canvas ref={canvas => this.canvas = canvas} onMouseMove={this._onMouseMove.bind(this)} />
+                    <canvas ref={canvas => this.canvas = canvas} onMouseMove={this._onMouseMove.bind(this)} onTouchMove={this._onMouseMove.bind(this)} />
                 </div>
             );
         } else {

@@ -319,11 +319,11 @@ class App extends Component {
     render() {
         return (
             <div className="row">
-              <div className="col-md-2"></div>
-              <div className="col-md-8">
+              <div className="col-xs-hidden col-md-1"></div>
+              <div className="col-xs-12 col-md-10">
                   {this.renderGameState(this.props.game.gameState)}
               </div>
-              <div className="col-md-2"></div>
+              <div className="col-xs-hidden col-md-1"></div>
             </div>
         );
     }
