@@ -5,7 +5,21 @@ const INITIAL_STATE = {
     lives: 2,
     level: 1,
     gameState: 'intro',
-    highScore: 0
+    highScore: {
+        table: [
+            { name: 'BRM', score: 50000 },
+            { name: 'Charlotte', score: 20000 },
+            { name: 'Nuno', score: 15000 },
+            { name: 'Ed', score: 10000 },
+            { name: 'Mark', score: 8000 },
+            { name: 'April', score: 5000 },
+            { name: 'Poppy', score: 3000 },
+            { name: 'Gus', score: 1000 },
+            { name: 'Olly', score: 500 },
+            { name: 'Luke', score: 100 },
+        ],
+        isHighScore: false
+    }
 };
 
 export default function (state = INITIAL_STATE, action) {
@@ -18,7 +32,10 @@ export default function (state = INITIAL_STATE, action) {
         case types.UPDATE_HIGH_SCORE:
             return {
                 ...state,
-                highScore: action.payload
+                highScore: {
+                    table: action.payload,
+                    isHighScore: true
+                }
             }
         case types.UPDATE_LIVES:
             return {

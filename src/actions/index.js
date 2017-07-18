@@ -44,6 +44,7 @@ export function updateScore(score) {
 }
 
 export function updateHighScore(highScore) {
+    console.log('high score', highScore);
     return {
         type: types.UPDATE_HIGH_SCORE,
         payload: highScore

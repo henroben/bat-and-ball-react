@@ -19,14 +19,42 @@ body {
 h1, h2, h3 {
   color: $text-color !important;
   margin-top: 0px !important;
+  margin-bottom: 15px !important;
 }
 
 canvas {
   cursor: none;
 }
 
+/* ===== High Score Table ===== */
+.high-score {
+  text-align: left;
+  text-indent: 15px;
+  .row {
+    margin-top: 0px;
+  }
+  .list-group-item {
+    background-color: transparent !important;
+    color: $text-color;
+  }
+  input {
+    background-color: transparent;
+    border: none;
+    color: $text-color;
+  }
+}
+
 /* ===== Bat & Ball Intro Screen ===== */
 .bat-and-ball-intro-screen {
+  text-align: center;
+  p {
+    color: $text-color;
+    text-align: justify;
+  }
+}
+
+/* ===== Bat & Ball Game Over Screen ===== */
+.bat-and-ball-game-over {
   text-align: center;
   p {
     color: $text-color;

@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import _ from 'lodash';
 import DisplayIntro from './display_intro';
+import DisplayGameOver from './display_game_over';
 import {
     ballMove,
     createBrickGrid,
@@ -82,10 +84,30 @@ class App extends Component {
             } else {
                 // run out of lives, GAME OVER MAN!
                 this.game('gameover'); // clear interval
-                if(this.props.game.score > this.props.game.highScore) {
-                    // Player achieved new high score
-                    this.props.updateHighScore(this.props.game.score);
+
+                // check new score against lowest score in highscore table
+                if(this.props.game.score > this.props.game.highScore.table[9].score) {
+                    console.log('new high score');
+                    let newScoreTable = this.props.game.highScore.table;
+                    let newScore = {
+                        name: null,
+                        score: this.props.game.score
+                    }
+                    newScoreTable.push(newScore);
+
+                    // sort the new table
+                    let sortedScore = _.sortBy( newScoreTable, 'score' );
+                    sortedScore = sortedScore.reverse();
+                    // remove the lowest score & update
+                    console.log(newScoreTable);
+                    console.log(sortedScore.slice(0, 10));
+                    this.props.updateHighScore(sortedScore.slice(0, 10));
                 }
+
+                // if(this.props.game.score > this.props.game.highScore.table) {
+                //     // Player achieved new high score
+                //     this.props.updateHighScore(this.props.game.score);
+                // }
                 this.props.updateGameState('gameover');
                 return;
             }
@@ -296,7 +318,7 @@ class App extends Component {
             case 'intro':
                 return(
                     <div>
-                        <DisplayIntro handleClick={this.handleClick.bind(this, 'play')} />
+                        <DisplayIntro handleClick={this.handleClick.bind(this, 'play')} highscore={this.props.game.highScore} />
                     </div>
                 );
             case 'play':
@@ -306,11 +328,7 @@ class App extends Component {
             case 'gameover':
                 return(
                     <div>
-                        <h1>GAME OVER!</h1>
-                        <h1>You Got To Level {this.props.game.level}</h1>
-                        <h1>And Scored {this.props.game.score} Points!</h1>
-                        <h1>Current High Score is {this.props.game.highScore}</h1>
-                        <button className="btn btn-primary" onClick={this.handleClick.bind(this, 'intro')}>TRY AGAIN</button>
+                        <DisplayGameOver handleClick={this.handleClick.bind(this, 'intro')} score={this.props.game.score} level={this.props.game.level} highscore={this.props.game.highScore.table} />
                     </div>
                 );
         }
@@ -330,7 +348,7 @@ class App extends Component {
 }
 
 function mapStateToProps(state) {
-    // console.log(state.bricks.brickGrid);
+    console.log(state.game.highScore);
     return {
         ...state,
         ball: state.ball,
