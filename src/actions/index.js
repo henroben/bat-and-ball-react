@@ -1,4 +1,5 @@
 import * as types from './types';
+import firebase, { firebaseRef } from './../firebase/index';
 
 export function ballMove(ball) {
     return {
@@ -43,8 +44,24 @@ export function updateScore(score) {
     }
 }
 
+export function readHighScore(score) {
+    return function (dispatch) {
+        // firebaseRef.child('/batandball/').set(score);
+
+        let batandballRef = firebaseRef.child('/batandball/').once('value');
+
+        return batandballRef.then(function(snapshot) {
+            dispatch({
+                type: types.UPDATE_HIGH_SCORE,
+                payload: snapshot.val()
+            });
+        });
+    }
+}
+
 export function updateHighScore(highScore) {
     console.log('high score', highScore);
+    firebaseRef.child('/batandball/').set(highScore);
     return {
         type: types.UPDATE_HIGH_SCORE,
         payload: highScore

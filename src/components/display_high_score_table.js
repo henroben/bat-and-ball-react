@@ -1,8 +1,17 @@
-import React from 'react';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { updateHighScore } from './../actions';
 
-export default (props) => {
-    "use strict";
-    function addScorePosition(score, index) {
+class DisplayHighScoreTable extends Component {
+
+
+    handleFormClick(index) {
+        let highScoreTable = this.props.highscore;
+        highScoreTable[index].name = this.textInput.value;
+        this.props.updateHighScore(highScoreTable);
+    }
+
+    addScorePosition(score, index) {
         if(score.name === null) {
             // no name, so add form
             return(
@@ -11,10 +20,10 @@ export default (props) => {
                         {index + 1}
                     </div>
                     <div className="col-xs-5">
-                        <input type="text" placeholder="Enter Your Name" />
+                        <input type="text" ref={(input) => { this.textInput = input; }} placeholder="Enter Your Name" />
                     </div>
                     <div className="col-xs-5">
-                        <button className="btn btn-primary">SAVE</button>
+                        <button className="btn btn-primary" onClick={this.handleFormClick.bind(this, index)}>SAVE</button>
                     </div>
                 </div>
             );
@@ -34,17 +43,29 @@ export default (props) => {
             );
         }
     }
-    function isNewHighScore(scoreTable) {
-        console.log('isNewHighScore', scoreTable);
+
+    isNewHighScore(scoreTable) {
         return scoreTable.map((score, index) => {
             return <li className="list-group-item">
-                {addScorePosition(score, index)}
+                {this.addScorePosition(score, index)}
              </li>
         });
     }
-    return(
-        <ul className="list-group high-score">
-            {isNewHighScore(props.highscore)}
-        </ul>
-    );
+
+    render() {
+        return(
+            <ul className="list-group high-score">
+                {this.isNewHighScore(this.props.highscore)}
+            </ul>
+        );
+    }
 }
+
+function mapStateToProps(state) {
+    // console.log(state);
+    return {
+        ...state
+    };
+}
+
+export default connect(mapStateToProps, { updateHighScore })(DisplayHighScoreTable);

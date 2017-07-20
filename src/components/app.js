@@ -12,7 +12,8 @@ import {
     updateHighScore,
     updateLives,
     updateLevel,
-    updateGameState
+    updateGameState,
+    readHighScore
 } from '../actions';
 
 import DisplayPlayArea from './display_play_area';
@@ -29,6 +30,7 @@ class App extends Component {
     }
 
     componentDidMount() {
+        this.props.readHighScore();
         if(this.props.game.gameState === 'play') {
             // create the initial brick grid
             this.props.createBrickGrid(this.props.bricks.BRICK_COLS * this.props.bricks.BRICK_ROWS);
@@ -348,7 +350,7 @@ class App extends Component {
 }
 
 function mapStateToProps(state) {
-    console.log(state.game.highScore);
+    // console.log(state.game.highScore);
     return {
         ...state,
         ball: state.ball,
@@ -367,4 +369,5 @@ export default connect(mapStateToProps, {
     updateHighScore,
     updateLives,
     updateGameState,
-    updateLevel })(App);
+    updateLevel,
+    readHighScore})(App);
