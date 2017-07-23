@@ -46,6 +46,19 @@ class App extends Component {
         clearInterval(this.intervalId);
     }
 
+    goFullScreen(){
+        var elem = document.documentElement;
+        if (elem.requestFullscreen) {
+            elem.requestFullscreen();
+        } else if (elem.msRequestFullscreen) {
+            elem.msRequestFullscreen();
+        } else if (elem.mozRequestFullScreen) {
+            elem.mozRequestFullScreen();
+        } else if (elem.webkitRequestFullscreen) {
+            elem.webkitRequestFullscreen();
+        }
+    }
+
     updateAll() {
         this.ballMove();
         this.ballBrickHandler();
@@ -135,7 +148,7 @@ class App extends Component {
             if( this.props.ball.ballY+this.props.ball.ballSize > paddleTopEdgeY &&       // below top of paddle
                 this.props.ball.ballY+this.props.ball.ballSize < paddleBottomEdgeY &&    // above bottom of paddle
                 this.props.ball.ballX+this.props.ball.ballSize > paddleLeftEdgeX &&      // right of left side of paddle
-                this.props.ball.ballX+this.props.ball.ballSize < paddleRightEdgeX        // left of right side of paddle
+                this.props.ball.ballX-this.props.ball.ballSize < paddleRightEdgeX        // left of right side of paddle
             ) {
                 // collision with paddle
 
@@ -320,7 +333,7 @@ class App extends Component {
             case 'intro':
                 return(
                     <div>
-                        <DisplayIntro handleClick={this.handleClick.bind(this, 'play')} highscore={this.props.game.highScore} />
+                        <DisplayIntro handleClick={this.handleClick.bind(this, 'play')} goFullScreen={this.goFullScreen.bind(this)} highscore={this.props.game.highScore} />
                     </div>
                 );
             case 'play':

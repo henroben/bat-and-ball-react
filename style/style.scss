@@ -11,12 +11,12 @@ html {
 }
 
 body {
-  background-image: url(~/../img/brick-bk.png);
+  background: url("./../img/brick-bk.png") repeat center center fixed;
   font-family: $text-font;
   font-size: em(18px);
   color: $text-color;
   background-color: $body-background-color !important;
-
+  height: 100%;
 }
 
 .row {
@@ -37,6 +37,9 @@ h1, h2, h3 {
 
 canvas {
   cursor: none;
+  width: 100%;
+  height: 100%;
+  font-size: 14px;
 }
 
 /* ===== High Score Table ===== */
@@ -64,6 +67,57 @@ canvas {
   p {
     color: $text-color;
     text-align: justify;
+  }
+
+  .full-screen span {
+    display: inline-block;
+    position: relative;
+    transition: 0.5s;
+  }
+
+  .full-screen span:after {
+    font-family: FontAwesome;
+    content: '\f0b2';
+    position: absolute;
+    opacity: 0;
+    top: 0;
+    right: -15px;
+    transition: 0.5s;
+  }
+
+  .full-screen:hover span {
+    padding-right: 15px;
+  }
+
+  .full-screen:hover span:after {
+    opacity: 1;
+    right: 0;
+  }
+
+
+  .click-to-play span {
+    display: inline-block;
+    position: relative;
+    transition: 0.5s;
+  }
+
+  .click-to-play span:after {
+    font-family: FontAwesome;
+    content: '\f090';
+    position: absolute;
+    opacity: 0;
+    top: 0;
+    right: -15px;
+    transition: 0.5s;
+  }
+
+  .click-to-play:hover span {
+    padding-right: 15px;
+  }
+
+  .click-to-play:hover span:after {
+    opacity: 1;
+    right: 0;
   }
 }
 

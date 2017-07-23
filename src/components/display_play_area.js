@@ -68,8 +68,8 @@ class DisplayPlayArea extends Component {
 
             // draw score lives
             this.colourText(ctx, 'Score: ' + this.props.score, 25, 25, '#ffffff');
-            this.colourText(ctx, 'Level: ' + this.props.level, 385, 25, '#ffffff');
-            this.colourText(ctx, 'Lives: ' + this.props.lives, 740, 25, '#ffffff');
+            this.colourText(ctx, 'Level: ' + this.props.level, 378, 25, '#ffffff');
+            this.colourText(ctx, 'Lives: ' + this.props.lives, 725, 25, '#ffffff');
 
             // draw ball sprite
             this.colourCircle(ctx, this.props.ball.ballX, this.props.ball.ballY, this.props.ball.ballSize, '#ffffff');
@@ -150,6 +150,7 @@ class DisplayPlayArea extends Component {
 
     colourText(ctx, showWords, textX, textY, fillColour) {
         ctx.fillStyle = fillColour;
+        ctx.font = '14px Arial';
         ctx.fillText(showWords, textX, textY);
     }
 
@@ -159,7 +160,6 @@ class DisplayPlayArea extends Component {
         if(this.props.ball) {
             return (
                 <div className="play-area">
-                    <h3>Bat and Ball</h3>
                     <canvas ref={canvas => this.canvas = canvas} onMouseMove={this._onMouseMove.bind(this)} onTouchMove={this._onMouseMove.bind(this)} />
                 </div>
             );
