@@ -11,7 +11,8 @@ const VENDOR_LIBS = [
     'react-redux',
     'react-router',
     'redux',
-    'redux-thunk'
+    'redux-thunk',
+    'firebase'
 ];
 
 module.exports = {
