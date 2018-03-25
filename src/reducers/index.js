@@ -5,10 +5,10 @@ import BricksReducer from './reducer_bricks';
 import GameReducer from './reducer_game';
 
 const rootReducer = combineReducers({
-  ball: BallReducer,
-  paddle: PaddleReducer,
-  bricks: BricksReducer,
-  game: GameReducer
+	ball: BallReducer,
+	paddle: PaddleReducer,
+	bricks: BricksReducer,
+	game: GameReducer
 });
 
 export default rootReducer;
